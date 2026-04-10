@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Manage Crops{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-header">
+    <h2>🌾 Crop Management</h2>
+    <p>View and manage all crop listings across the platform</p>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Crop</th><th>Farmer</th><th>Category</th><th>Price</th><th>Qty</th><th>Status</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for crop in crops %}
+          <tr>
+            <td>{{ crop.id }}</td>
+            <td><strong>{{ crop.emoji }} {{ crop.name }}</strong></td>
+            <td>{{ crop.farmer_name }}</td>
+            <td>{{ crop.category|capitalize }}</td>
+            <td>₹{{ crop.price }}/{{ crop.unit }}</td>
+            <td>{{ crop.quantity }} {{ crop.unit }}</td>
+            <td><span class="badge badge-{{ crop.status }}">{{ crop.status|replace('_',' ')|capitalize }}</span></td>
+            <td>
+              <a href="{{ url_for('admin_delete_crop', crop_id=crop.id) }}" class="btn btn-red btn-sm" onclick="return confirm('Delete this crop listing?')">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

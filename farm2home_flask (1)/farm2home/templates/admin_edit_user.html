@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Edit User{% endblock %}
+{% block content %}
+<section class="section" style="max-width:600px;margin:0 auto;">
+  <div class="card">
+    <div class="card-title">✏️ Edit User: {{ user.name }}</div>
+    <form method="post">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" value="{{ user.name }}" required/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" name="phone" value="{{ user.phone }}" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Role</label>
+          <select name="role">
+            <option value="customer" {% if user.role=='customer' %}selected{% endif %}>🧑‍💼 Customer</option>
+            <option value="farmer" {% if user.role=='farmer' %}selected{% endif %}>👨‍🌾 Farmer</option>
+            <option value="admin" {% if user.role=='admin' %}selected{% endif %}>👑 Admin</option>
+          </select>
+          {% if user.id == session.user_id %}
+          <small style="color:var(--red);">⚠️ Changing your own role may lock you out.</small>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label>Language</label>
+          <select name="language">
+            <option value="English" {% if user.language=='English' %}selected{% endif %}>English</option>
+            <option value="Telugu" {% if user.language=='Telugu' %}selected{% endif %}>Telugu</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" name="location" value="{{ user.location or '' }}"/>
+        </div>
+        <div class="form-group">
+          <label>District</label>
+          <input type="text" name="district" value="{{ user.district or '' }}"/>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn btn-green">Save Changes</button>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

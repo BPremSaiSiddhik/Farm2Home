@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-header">
+    <h2>👥 User Management</h2>
+    <p>View, edit, and manage all platform users</p>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+    <div class="filter-row">
+      <a href="{{ url_for('admin_users', role='all') }}" class="filter-pill {% if role_filter=='all' %}active{% endif %}">All</a>
+      <a href="{{ url_for('admin_users', role='farmer') }}" class="filter-pill {% if role_filter=='farmer' %}active{% endif %}">👨‍🌾 Farmers</a>
+      <a href="{{ url_for('admin_users', role='customer') }}" class="filter-pill {% if role_filter=='customer' %}active{% endif %}">🧑‍💼 Customers</a>
+      <a href="{{ url_for('admin_users', role='admin') }}" class="filter-pill {% if role_filter=='admin' %}active{% endif %}">👑 Admins</a>
+    </div>
+    <div style="color:var(--muted);">Total: {{ users|length }} users</div>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Phone</th><th>Role</th><th>Location</th><th>District</th><th>Joined</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td><strong>{{ user.name }}</strong></td>
+            <td>{{ user.phone }}</td>
+            <td>{% if user.role == 'admin' %}👑 Admin{% elif user.role == 'farmer' %}👨‍🌾 Farmer{% else %}🧑‍💼 Customer{% endif %}</td>
+            <td>{{ user.location or '-' }}</td>
+            <td>{{ user.district or '-' }}</td>
+            <td>{{ user.created_at[:10] }}</td>
+            <td style="display:flex;gap:6px;">
+              <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-outline btn-sm">Edit</a>
+              {% if user.id != session.user_id %}
+              <a href="{{ url_for('admin_delete_user', user_id=user.id) }}" class="btn btn-red btn-sm" onclick="return confirm('Delete this user? This action cannot be undone.')">Delete</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

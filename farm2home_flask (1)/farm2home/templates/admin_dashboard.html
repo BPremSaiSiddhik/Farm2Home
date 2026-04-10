@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block extra_css %}
+<style>
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-bottom:32px;}
+.stat-card{background:#fff;border-radius:var(--radius);padding:22px 18px;box-shadow:0 2px 10px rgba(0,0,0,.05);border-left:4px solid var(--green);}
+.stat-card .value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--green);}
+.stat-card .label{color:var(--muted);font-size:.85rem;margin-top:4px;}
+.stat-card .trend{font-size:.75rem;margin-top:6px;}
+.admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:24px;}
+.data-card{background:#fff;border-radius:var(--radius);padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.data-card h3{font-family:'Playfair Display',serif;color:var(--green);margin-bottom:16px;font-size:1.2rem;}
+.table-mini{font-size:.85rem;}
+.table-mini td{padding:10px 8px;}
+.status-badge{padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+</style>
+{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-header">
+    <h2>👑 Admin Dashboard</h2>
+    <p>Welcome, {{ session.name }}! Manage the entire Farm2Home platform.</p>
+  </div>
+
+  <div class="admin-stats">
+    <div class="stat-card"><div class="value">{{ stats.total_users }}</div><div class="label">Total Users</div><div class="trend">👥 {{ stats.total_farmers }} Farmers | {{ stats.total_customers }} Customers</div></div>
+    <div class="stat-card"><div class="value">{{ stats.total_crops }}</div><div class="label">Total Listings</div><div class="trend">🌾 {{ stats.active_crops }} Active</div></div>
+    <div class="stat-card"><div class="value">{{ stats.total_orders }}</div><div class="label">Total Orders</div><div class="trend">📦 {{ stats.pending_orders }} Pending | {{ stats.delivered_orders }} Delivered</div></div>
+    <div class="stat-card"><div class="value">₹{{ "%.0f"|format(stats.total_revenue) }}</div><div class="label">Total Revenue</div><div class="trend">💰 Lifetime earnings</div></div>
+  </div>
+
+  <div class="admin-grid">
+    <div class="data-card">
+      <h3>📋 Recent Orders</h3>
+      <div class="table-wrap">
+        <table class="table-mini">
+          <thead><tr><th>ID</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for order in recent_orders[:5] %}
+            <tr>
+              <td>#{{ order.id }}</td>
+              <td>{{ order.customer_name[:15] }}</td>
+              <td>{{ order.crop_name }}</td>
+              <td>₹{{ "%.0f"|format(order.total_price) }}</td>
+              <td><span class="status-badge" style="background:#d1ecf1;color:#0c5460;">{{ order.status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;"><a href="{{ url_for('admin_orders') }}" class="btn btn-outline btn-sm">View All Orders →</a></div>
+    </div>
+
+    <div class="data-card">
+      <h3>👤 Recent Users</h3>
+      <div class="table-wrap">
+        <table class="table-mini">
+          <thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead>
+          <tbody>
+            {% for user in recent_users[:5] %}
+            <tr>
+              <td>{{ user.name[:20] }}</td>
+              <td>{{ user.phone }}</td>
+              <td>{% if user.role == 'admin' %}👑 Admin{% elif user.role == 'farmer' %}👨‍🌾 Farmer{% else %}🧑‍💼 Customer{% endif %}</td>
+              <td>{{ user.created_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;"><a href="{{ url_for('admin_users') }}" class="btn btn-outline btn-sm">Manage Users →</a></div>
+    </div>
+
+    <div class="data-card">
+      <h3>🌾 Crop Management</h3>
+      <p style="color:var(--muted);font-size:.85rem;margin-bottom:12px;">View and manage all crop listings across the platform.</p>
+      <a href="{{ url_for('admin_crops') }}" class="btn btn-green btn-sm">Manage Crops →</a>
+    </div>
+
+    <div class="data-card">
+      <h3>📊 Quick Actions</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <a href="{{ url_for('admin_orders') }}?status=pending" class="btn btn-outline btn-sm">⏳ View Pending Orders</a>
+        <a href="{{ url_for('admin_users') }}?role=farmer" class="btn btn-outline btn-sm">👨‍🌾 View All Farmers</a>
+        <a href="{{ url_for('admin_users') }}?role=customer" class="btn btn-outline btn-sm">🧑‍💼 View All Customers</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

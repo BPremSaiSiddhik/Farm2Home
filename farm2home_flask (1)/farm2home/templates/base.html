@@ -111,6 +111,10 @@ footer strong{color:#fff;}
   <ul>
     <li><a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}class="active-link"{% endif %}>Home</a></li>
     <li><a href="{{ url_for('marketplace') }}" {% if request.endpoint=='marketplace' %}class="active-link"{% endif %}>🛍️ Marketplace</a></li>
+    <!-- Add this line after the marketplace link -->
+{% if session.role == 'admin' %}
+<li><a href="{{ url_for('admin_dashboard') }}" {% if 'admin' in request.endpoint %}class="active-link"{% endif %}>👑 Admin Panel</a></li>
+{% endif %}
     {% if session.role == 'farmer' %}
     <li><a href="{{ url_for('farmer_dashboard') }}" {% if 'farmer' in request.endpoint %}class="active-link"{% endif %}>👨‍🌾 My Dashboard</a></li>
     {% else %}
