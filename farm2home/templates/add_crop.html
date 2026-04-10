@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Add New Crop{% endblock %}
+{% block content %}
+<section class="section" style="max-width:700px;margin:0 auto;">
+  <div class="card">
+    <div class="card-title">➕ List a New Crop</div>
+    <div style="background:var(--green-pale);border-radius:10px;padding:14px 18px;margin-bottom:22px;font-size:.85rem;color:var(--green);">
+      💡 <strong>Tip:</strong> Add a clear description and harvest date. Customers prefer detailed listings!
+    </div>
+    <form method="post" action="{{ url_for('add_crop') }}">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Crop Name *</label>
+          <input type="text" name="name" placeholder="e.g. Tomatoes, Rice, Mango" required/>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select name="category" required>
+            <option value="">Select Category</option>
+            <option value="vegetable">🥦 Vegetable</option>
+            <option value="fruit">🍎 Fruit</option>
+            <option value="grain">🌾 Grain / Cereal</option>
+            <option value="pulse">🫘 Pulse / Legume</option>
+            <option value="spice">🌶️ Spice / Herb</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Available Quantity *</label>
+          <input type="number" name="quantity" placeholder="e.g. 500" min="1" step="any" required/>
+        </div>
+        <div class="form-group">
+          <label>Unit</label>
+          <select name="unit">
+            <option value="kg">kg</option>
+            <option value="dozen">dozen</option>
+            <option value="piece">piece</option>
+            <option value="quintal">quintal</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (₹) per unit *</label>
+          <input type="number" name="price" placeholder="e.g. 40" min="1" step="any" required/>
+        </div>
+        <div class="form-group">
+          <label>Minimum Order (units)</label>
+          <input type="number" name="min_order" placeholder="e.g. 5" min="1" value="1"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Harvest Date</label>
+          <input type="date" name="harvest_date"/>
+        </div>
+        <div class="form-group">
+          <label>Location / Village</label>
+          <input type="text" name="location" placeholder="e.g. Nellore, AP"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Emoji (icon for your crop)</label>
+          <input type="text" name="emoji" placeholder="e.g. 🍅" maxlength="4"/>
+        </div>
+        <div class="form-group" style="justify-content:flex-end;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin-top:28px;">
+            <input type="checkbox" name="is_organic" style="width:18px;height:18px;accent-color:var(--green);"/>
+            <span>🌿 This crop is Organic</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" placeholder="Describe quality, variety, farming method..."></textarea>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn btn-green">🌾 Publish Listing</button>
+        <a href="{{ url_for('farmer_dashboard') }}" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block extra_css %}
+<style>
+.hero{background:linear-gradient(135deg,#1a5c2a 0%,#2d7a3a 60%,#4caf63 100%);min-height:86vh;display:flex;align-items:center;padding:0 5%;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");}
+.hero-content{flex:1;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:50px;padding:6px 16px;color:#fff;font-size:.82rem;margin-bottom:22px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5vw,3.8rem);color:#fff;line-height:1.1;margin-bottom:18px;}
+.hero h1 span{color:#d4a017;}
+.hero p{color:rgba(255,255,255,.8);font-size:1rem;max-width:500px;line-height:1.7;margin-bottom:32px;}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+.hero-visual{flex:1;display:flex;justify-content:center;z-index:1;}
+.hero-box{background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:24px;padding:36px;font-size:5rem;text-align:center;animation:float 3s ease-in-out infinite;line-height:1.5;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.stats-bar{background:#fff;display:flex;border-bottom:1px solid #eee;}
+.stat{flex:1;text-align:center;padding:28px 16px;border-right:1px solid #eee;}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;color:var(--green);font-weight:900;}
+.stat-label{color:var(--muted);font-size:.82rem;margin-top:3px;}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;}
+.prod-card{background:#fff;border-radius:var(--radius);box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;transition:.3s;}
+.prod-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.prod-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:3.8rem;background:var(--green-pale);}
+.prod-body{padding:16px;}
+.prod-name{font-weight:700;font-size:.95rem;margin-bottom:3px;}
+.prod-farmer{color:var(--muted);font-size:.78rem;margin-bottom:10px;}
+.prod-foot{display:flex;align-items:center;justify-content:space-between;}
+.prod-price{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);font-weight:700;}
+.prod-unit{color:var(--muted);font-size:.75rem;}
+.tag-organic{display:inline-block;background:#fff3cd;color:#856404;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:6px;}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:24px;}
+.how-card{text-align:center;padding:32px 20px;background:#fff;border-radius:var(--radius);box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.how-icon{font-size:2.8rem;margin-bottom:14px;}
+.how-num{background:var(--green);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;margin:0 auto 12px;}
+.how-card h3{font-weight:700;margin-bottom:7px;font-size:.95rem;}
+.how-card p{color:var(--muted);font-size:.84rem;line-height:1.6;}
+.cta-banner{background:var(--green);padding:70px 5%;text-align:center;color:#fff;}
+.cta-banner h2{font-family:'Playfair Display',serif;font-size:1.9rem;margin-bottom:14px;}
+.cta-banner p{color:rgba(255,255,255,.8);margin-bottom:28px;}
+</style>
+{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🌿 Direct from Farmer to Your Table</div>
+    <h1>Fresh Crops.<br/><span>Fair Price.</span><br/>Zero Middlemen.</h1>
+    <p>Farm2Home connects farmers directly with consumers across Andhra Pradesh & Telangana. Fresh, seasonal produce at honest prices.</p>
+    <div class="hero-ctas">
+      <a href="{{ url_for('marketplace') }}" class="btn btn-gold">Shop Fresh Produce</a>
+      <a href="{{ url_for('register') }}" class="btn" style="background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.4);">Join as Farmer</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-box">🥬🍅🌽<br/>🫑🥕🧅</div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">{{ stats.farmers }}+</div><div class="stat-label">Registered Farmers</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.customers }}+</div><div class="stat-label">Happy Customers</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.crops }}+</div><div class="stat-label">Active Listings</div></div>
+  <div class="stat"><div class="stat-num">{{ stats.orders }}+</div><div class="stat-label">Orders Placed</div></div>
+</div>
+
+<section class="section" style="background:#fff;">
+  <div class="section-header">
+    <h2>How It Works</h2>
+    <p>A simple 4-step process that removes middlemen</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-icon">👨‍🌾</div>
+      <div class="how-num">1</div>
+      <h3>Farmer Registers</h3>
+      <p>Farmers sign up and list available crops with price, quantity, and delivery location.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🛒</div>
+      <div class="how-num">2</div>
+      <h3>Customer Orders</h3>
+      <p>Customers browse, choose fresh produce, and place orders directly with nearby farmers.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">🚚</div>
+      <div class="how-num">3</div>
+      <h3>Fresh Delivery</h3>
+      <p>Produce is delivered fresh from farm — no cold storage, no long supply chains.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">💰</div>
+      <div class="how-num">4</div>
+      <h3>Direct Payment</h3>
+      <p>Farmers receive full payment — better income, no middlemen cutting margins.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <h2>Featured Fresh Produce</h2>
+    <p>Hand-picked crops available right now</p>
+  </div>
+  <div class="prod-grid">
+    {% for crop in featured %}
+    <div class="prod-card">
+      <div class="prod-img">{{ crop.emoji }}</div>
+      <div class="prod-body">
+        {% if crop.is_organic %}<span class="tag-organic">🌿 Organic</span>{% endif %}
+        <div class="prod-name">{{ crop.name }}</div>
+        <div class="prod-farmer">👨‍🌾 {{ crop.farmer_name }} &nbsp;📍 {{ crop.farmer_loc }}</div>
+        <div class="prod-foot">
+          <div><div class="prod-price">₹{{ crop.price }}</div><div class="prod-unit">per {{ crop.unit }}</div></div>
+          <form method="post" action="{{ url_for('add_to_cart', crop_id=crop.id) }}" style="display:inline;">
+            <input type="hidden" name="quantity" value="1"/>
+            <button type="submit" class="btn btn-green btn-sm">+ Cart</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div style="text-align:center;margin-top:32px;">
+    <a href="{{ url_for('marketplace') }}" class="btn btn-green">View All Produce →</a>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <div style="font-size:3rem;margin-bottom:14px;">👨‍🌾</div>
+  <h2>Are You a Farmer?</h2>
+  <p>Join farmers already earning more by selling directly to customers. No middlemen, no delays.</p>
+  <a href="{{ url_for('register') }}" class="btn btn-gold">Register as Farmer</a>
+</div>
+{% endblock %}

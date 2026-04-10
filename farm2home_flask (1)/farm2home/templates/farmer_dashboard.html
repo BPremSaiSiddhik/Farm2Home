@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Farmer Dashboard{% endblock %}
+{% block extra_css %}
+<style>
+.dash-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
+.sidebar{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.sidebar h3{font-family:'Playfair Display',serif;color:var(--green);margin-bottom:18px;}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-size:.88rem;margin-bottom:4px;transition:.2s;}
+.sidebar a:hover,.sidebar a.active{background:var(--green-pale);color:var(--green);font-weight:600;}
+.earn-box{background:var(--green);border-radius:12px;padding:18px;color:#fff;margin-top:20px;text-align:center;}
+.earn-box .num{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;}
+.earn-box .label{font-size:.8rem;color:rgba(255,255,255,.75);margin-top:3px;}
+.stat-mini{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+.stat-mini-card{border-radius:12px;padding:16px;text-align:center;}
+.stat-mini-card .n{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;}
+.stat-mini-card .l{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.tab-nav{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{padding:9px 16px;border:1.5px solid #ddd;border-radius:10px;background:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;transition:.2s;}
+.tab-btn.active,.tab-btn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+</style>
+{% endblock %}
+{% block content %}
+<section class="section" style="padding-top:36px;">
+  <div class="dash-layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <h3>🌾 {{ session.name }}</h3>
+      <a href="{{ url_for('add_crop') }}" class="{% if request.endpoint=='add_crop' %}active{% endif %}">➕ Add New Crop</a>
+      <a href="#" onclick="showTab('listings')" class="active" id="nav-listings">📦 My Listings</a>
+      <a href="#" onclick="showTab('orders')" id="nav-orders">🛒 Incoming Orders</a>
+      <a href="#" onclick="showTab('earnings')" id="nav-earnings">💰 Earnings</a>
+      <a href="{{ url_for('farmer_profile') }}">👤 My Profile</a>
+      <div class="earn-box">
+        <div class="label">This Month</div>
+        <div class="num">₹{{ "%.0f"|format(this_month) }}</div>
+        <div class="label">Total Earned</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div>
+      <!-- LISTINGS TAB -->
+      <div class="tab-content active card" id="tab-listings">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+          <div class="card-title" style="margin-bottom:0;">📦 My Crop Listings</div>
+          <a href="{{ url_for('add_crop') }}" class="btn btn-green btn-sm">+ Add New</a>
+        </div>
+        {% if listings %}
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Crop</th><th>Category</th><th>Qty</th><th>Price/kg</th><th>Organic</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for c in listings %}
+            <tr>
+              <td>{{ c.emoji }} <strong>{{ c.name }}</strong></td>
+              <td>{{ c.category|capitalize }}</td>
+              <td>{{ c.quantity }} {{ c.unit }}</td>
+              <td>₹{{ c.price }}</td>
+              <td>{% if c.is_organic %}<span class="badge badge-active">Yes</span>{% else %}No{% endif %}</td>
+              <td><span class="badge badge-{{ c.status }}">{{ c.status|replace('_',' ')|capitalize }}</span></td>
+              <td style="display:flex;gap:6px;">
+                <a href="{{ url_for('edit_crop', crop_id=c.id) }}" class="btn btn-outline btn-sm">Edit</a>
+                <a href="{{ url_for('delete_crop', crop_id=c.id) }}" class="btn btn-red btn-sm" onclick="return confirm('Delete this listing?')">Del</a>
+              </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:40px;color:var(--muted);">
+          <div style="font-size:3rem;margin-bottom:12px;">🌱</div>
+          <p>No listings yet. <a href="{{ url_for('add_crop') }}" style="color:var(--green);font-weight:700;">Add your first crop!</a></p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- ORDERS TAB -->
+      <div class="tab-content card" id="tab-orders">
+        <div class="card-title">🛒 Incoming Orders</div>
+        {% if incoming %}
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Crop</th><th>Qty</th><th>Amount</th><th>Date</th><th>Status</th><th>Update</th></tr></thead>
+            <tbody>
+            {% for o in incoming %}
+            <tr>
+              <td style="font-weight:700;color:var(--green);">#{{ o.id }}</td>
+              <td>{{ o.customer_name }}</td>
+              <td>{{ o.emoji }} {{ o.crop_name }}</td>
+              <td>{{ o.quantity }} kg</td>
+              <td style="font-weight:700;">₹{{ "%.0f"|format(o.total_price) }}</td>
+              <td>{{ o.created_at[:10] }}</td>
+              <td><span class="badge badge-{{ o.status }}">{{ o.status|capitalize }}</span></td>
+              <td>
+                <form method="post" action="{{ url_for('update_order_status', order_id=o.id) }}" style="display:flex;gap:4px;">
+                  <select name="status" style="padding:5px 8px;border:1.5px solid #ddd;border-radius:8px;font-size:.8rem;">
+                    <option value="pending" {% if o.status=='pending' %}selected{% endif %}>Pending</option>
+                    <option value="processing" {% if o.status=='processing' %}selected{% endif %}>Processing</option>
+                    <option value="delivered" {% if o.status=='delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if o.status=='cancelled' %}selected{% endif %}>Cancelled</option>
+                  </select>
+                  <button type="submit" class="btn btn-green btn-sm">✓</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:40px;color:var(--muted);">
+          <div style="font-size:3rem;margin-bottom:12px;">🛒</div>
+          <p>No orders yet. Keep your listings active!</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- EARNINGS TAB -->
+      <div class="tab-content card" id="tab-earnings">
+        <div class="card-title">💰 Earnings Overview</div>
+        <div class="stat-mini">
+          <div class="stat-mini-card" style="background:var(--green-pale);">
+            <div class="n" style="color:var(--green);">₹{{ "%.0f"|format(this_month) }}</div>
+            <div class="l">This Month</div>
+          </div>
+          <div class="stat-mini-card" style="background:#fff3cd;">
+            <div class="n" style="color:#856404;">₹{{ "%.0f"|format(earnings.total or 0) }}</div>
+            <div class="l">Total Earned</div>
+          </div>
+          <div class="stat-mini-card" style="background:#d1ecf1;">
+            <div class="n" style="color:#0c5460;">{{ earnings.count or 0 }}</div>
+            <div class="l">Completed Orders</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Crop</th><th>Date</th><th>Amount</th></tr></thead>
+            <tbody>
+            {% for o in incoming if o.status == 'delivered' %}
+            <tr>
+              <td style="color:var(--green);font-weight:700;">#{{ o.id }}</td>
+              <td>{{ o.customer_name }}</td>
+              <td>{{ o.emoji }} {{ o.crop_name }}</td>
+              <td>{{ o.created_at[:10] }}</td>
+              <td style="color:var(--green);font-weight:700;">+₹{{ "%.0f"|format(o.total_price) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:30px;">No completed orders yet.</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  const nav = document.getElementById('nav-'+name);
+  if(nav) nav.classList.add('active');
+}
+</script>
+{% endblock %}

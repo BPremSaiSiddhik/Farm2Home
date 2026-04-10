@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}Farm2Home{% endblock %} – Fresh from Farm to Door</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1a5c2a;--green-light:#2d8a45;--green-pale:#e8f5ec;
+  --earth:#7a4f2d;--cream:#fdf8f0;--gold:#d4a017;--red:#c0392b;
+  --text:#1c1c1c;--muted:#666;--white:#fff;
+  --radius:14px;--shadow:0 8px 32px rgba(0,0,0,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);}
+a{text-decoration:none;color:inherit;}
+
+/* NAV */
+nav{background:var(--green);padding:0 5%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999;box-shadow:0 2px 20px rgba(0,0,0,.3);}
+.logo{display:flex;align-items:center;gap:10px;padding:14px 0;}
+.logo-icon{font-size:1.8rem;}
+.logo-text{color:#fff;font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;}
+.logo-text span{color:var(--gold);}
+nav ul{display:flex;gap:6px;list-style:none;}
+nav ul li a{color:rgba(255,255,255,.85);padding:8px 13px;border-radius:8px;font-size:.88rem;font-weight:500;transition:.2s;display:flex;align-items:center;gap:5px;}
+nav ul li a:hover, nav ul li a.active-link{background:rgba(255,255,255,.15);color:#fff;}
+.nav-actions{display:flex;gap:8px;align-items:center;}
+.btn-nav{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.85rem;transition:.2s;}
+.btn-login{background:transparent;border:1.5px solid rgba(255,255,255,.5);color:#fff;}
+.btn-login:hover{background:rgba(255,255,255,.1);}
+.btn-signup{background:var(--gold);color:var(--green);}
+.btn-signup:hover{background:#e6b51e;}
+.cart-badge{background:var(--gold);color:var(--green);border-radius:50%;padding:1px 6px;font-size:.72rem;font-weight:800;margin-left:2px;}
+
+/* ALERTS */
+.alerts{position:fixed;top:74px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:340px;}
+.alert{padding:12px 18px;border-radius:12px;font-weight:600;font-size:.88rem;box-shadow:var(--shadow);animation:slideIn .3s ease;cursor:pointer;}
+.alert-success{background:var(--green);color:#fff;}
+.alert-danger{background:var(--red);color:#fff;}
+.alert-warning{background:var(--gold);color:var(--green);}
+.alert-info{background:#0c5460;color:#fff;}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* BUTTONS */
+.btn{display:inline-block;padding:11px 22px;border-radius:11px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.9rem;transition:.2s;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green-light);}
+.btn-gold{background:var(--gold);color:var(--green);}
+.btn-gold:hover{background:#e6b51e;}
+.btn-outline{background:transparent;border:1.5px solid var(--green);color:var(--green);}
+.btn-outline:hover{background:var(--green);color:#fff;}
+.btn-red{background:var(--red);color:#fff;}
+.btn-red:hover{background:#a93226;}
+.btn-sm{padding:7px 14px;font-size:.8rem;}
+
+/* FORMS */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:15px;}
+.form-group label{font-size:.85rem;font-weight:600;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{
+  padding:10px 14px;border:1.5px solid #ddd;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:.2s;background:#fff;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green);}
+.form-group textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* CARDS */
+.card{background:#fff;border-radius:var(--radius);box-shadow:0 2px 12px rgba(0,0,0,.07);padding:24px;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green);margin-bottom:18px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{background:var(--green-pale);color:var(--green);padding:11px 14px;text-align:left;font-size:.82rem;font-weight:700;}
+td{padding:12px 14px;border-bottom:1px solid #f0f0f0;font-size:.87rem;}
+tr:hover td{background:#fafafa;}
+.badge{padding:3px 11px;border-radius:20px;font-size:.75rem;font-weight:700;}
+.badge-pending{background:#fff3cd;color:#856404;}
+.badge-delivered{background:#d4edda;color:#155724;}
+.badge-processing{background:#d1ecf1;color:#0c5460;}
+.badge-cancelled{background:#f8d7da;color:#721c24;}
+.badge-active{background:#d4edda;color:#155724;}
+.badge-sold_out{background:#f8d7da;color:#721c24;}
+.badge-organic{background:#fff3cd;color:#856404;font-size:.72rem;}
+
+/* FOOTER */
+footer{background:var(--green);color:rgba(255,255,255,.7);text-align:center;padding:24px 5%;font-size:.85rem;margin-top:60px;}
+footer strong{color:#fff;}
+
+/* SECTION */
+.section{padding:60px 5%;}
+.section-header{text-align:center;margin-bottom:44px;}
+.section-header h2{font-family:'Playfair Display',serif;font-size:2rem;color:var(--green);margin-bottom:10px;}
+.section-header p{color:var(--muted);max-width:500px;margin:0 auto;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav ul{display:none;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="{{ url_for('index') }}">
+    <span class="logo-icon">🌾</span>
+    <span class="logo-text">Farm<span>2</span>Home</span>
+  </a>
+  <ul>
+    <li><a href="{{ url_for('index') }}" {% if request.endpoint=='index' %}class="active-link"{% endif %}>Home</a></li>
+    <li><a href="{{ url_for('marketplace') }}" {% if request.endpoint=='marketplace' %}class="active-link"{% endif %}>🛍️ Marketplace</a></li>
+    {% if session.role == 'farmer' %}
+    <li><a href="{{ url_for('farmer_dashboard') }}" {% if 'farmer' in request.endpoint %}class="active-link"{% endif %}>👨‍🌾 My Dashboard</a></li>
+    {% else %}
+    <li><a href="{{ url_for('my_orders') }}" {% if request.endpoint=='my_orders' %}class="active-link"{% endif %}>📦 My Orders</a></li>
+    {% endif %}
+    {% if session.user_id %}
+    <li>
+      <a href="{{ url_for('cart') }}" {% if request.endpoint=='cart' %}class="active-link"{% endif %}>
+        🛒 Cart<span class="cart-badge" id="cart-count">0</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+  <div class="nav-actions">
+    {% if session.user_id %}
+      <span style="color:rgba(255,255,255,.8);font-size:.85rem;">👋 {{ session.name }}</span>
+      <a href="{{ url_for('logout') }}" class="btn-nav btn-login">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn-nav btn-login">Login</a>
+      <a href="{{ url_for('register') }}" class="btn-nav btn-signup">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+
+<div class="alerts" id="alerts">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }}" onclick="this.remove()">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
+</div>
+
+{% block content %}{% endblock %}
+
+<footer>
+  <strong>Farm2Home</strong> — Connecting farmers directly to consumers across Andhra Pradesh & Telangana.<br/>
+  <span style="font-size:.8rem;">No middlemen. Fair prices. Fresh produce. 🌿</span>
+</footer>
+
+<script>
+// Auto-dismiss alerts
+setTimeout(()=>{
+  document.querySelectorAll('.alert').forEach(a=>{
+    a.style.opacity='0';a.style.transition='.4s';
+    setTimeout(()=>a.remove(),400);
+  });
+}, 4000);
+
+// Live cart count
+async function updateCartCount(){
+  try{
+    const r = await fetch('/cart/count');
+    const d = await r.json();
+    const el = document.getElementById('cart-count');
+    if(el) el.textContent = d.count;
+  }catch(e){}
+}
+updateCartCount();
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

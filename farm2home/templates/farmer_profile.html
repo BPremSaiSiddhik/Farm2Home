@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<section class="section" style="max-width:600px;margin:0 auto;">
+  <div class="card">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:3.5rem;margin-bottom:10px;">👨‍🌾</div>
+      <div class="card-title" style="margin-bottom:0;">Farmer Profile</div>
+    </div>
+    <form method="post" action="{{ url_for('farmer_profile') }}">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="name" value="{{ user.name }}" required/>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" value="{{ user.phone }}" disabled style="background:#f8f8f8;"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Village / Town</label>
+          <input type="text" name="location" value="{{ user.location or '' }}"/>
+        </div>
+        <div class="form-group">
+          <label>District</label>
+          <input type="text" name="district" value="{{ user.district or '' }}"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Bank Account Number</label>
+          <input type="text" name="bank_account" value="{{ user.bank_account or '' }}" placeholder="For direct payments"/>
+        </div>
+        <div class="form-group">
+          <label>IFSC Code</label>
+          <input type="text" name="ifsc" value="{{ user.ifsc or '' }}" placeholder="e.g. SBIN0011234"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Preferred Language</label>
+        <select name="language">
+          <option value="Telugu" {% if user.language=='Telugu' %}selected{% endif %}>తెలుగు Telugu</option>
+          <option value="English" {% if user.language=='English' or not user.language %}selected{% endif %}>English</option>
+          <option value="Both" {% if user.language=='Both' %}selected{% endif %}>Both</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <button type="submit" class="btn btn-green">Save Profile</button>
+        <a href="{{ url_for('farmer_dashboard') }}" class="btn btn-outline">Back to Dashboard</a>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

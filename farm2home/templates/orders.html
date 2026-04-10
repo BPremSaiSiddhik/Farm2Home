@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-header">
+    <h2>📦 My Orders</h2>
+    <p>Track all your fresh produce orders</p>
+  </div>
+  <div class="card">
+    {% if orders %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th><th>Date</th><th>Item</th><th>Farmer</th>
+            <th>Qty</th><th>Amount</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+          <tr>
+            <td style="font-weight:700;color:var(--green);">#{{ o.id }}</td>
+            <td>{{ o.created_at[:10] }}</td>
+            <td>{{ o.emoji }} {{ o.crop_name }}</td>
+            <td>{{ o.farmer_name }}</td>
+            <td>{{ o.quantity }} kg</td>
+            <td style="font-weight:700;">₹{{ "%.0f"|format(o.total_price) }}</td>
+            <td><span class="badge badge-{{ o.status }}">{{ o.status|capitalize }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div style="text-align:center;padding:60px;color:var(--muted);">
+      <div style="font-size:3.5rem;margin-bottom:14px;">📦</div>
+      <h3>No orders yet</h3>
+      <p style="margin-bottom:20px;">Start shopping to see your orders here</p>
+      <a href="{{ url_for('marketplace') }}" class="btn btn-green">Shop Now</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

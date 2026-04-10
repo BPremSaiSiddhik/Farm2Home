@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block extra_css %}
+<style>
+.role-pick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.role-card{border:2px solid #ddd;border-radius:12px;padding:18px;text-align:center;cursor:pointer;transition:.2s;background:#fff;}
+.role-card:has(input:checked){border-color:var(--green);background:var(--green-pale);}
+.role-card input{display:none;}
+.role-card .icon{font-size:2.2rem;margin-bottom:8px;}
+.role-card .label{font-weight:700;font-size:.9rem;color:var(--text);}
+.role-card .sub{font-size:.78rem;color:var(--muted);margin-top:3px;}
+</style>
+{% endblock %}
+{% block content %}
+<div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px 5%;">
+  <div class="card" style="max-width:480px;width:100%;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:3rem;margin-bottom:10px;">🌾</div>
+      <h2 style="font-family:'Playfair Display',serif;color:var(--green);font-size:1.8rem;">Join Farm2Home</h2>
+      <p style="color:var(--muted);font-size:.9rem;">Create your free account</p>
+    </div>
+    <form method="post" action="{{ url_for('register') }}">
+      <p style="font-weight:700;font-size:.88rem;margin-bottom:10px;">I am a...</p>
+      <div class="role-pick">
+        <label class="role-card">
+          <input type="radio" name="role" value="customer" checked/>
+          <div class="icon">🧑‍💼</div>
+          <div class="label">Customer</div>
+          <div class="sub">Buy fresh produce</div>
+        </label>
+        <label class="role-card">
+          <input type="radio" name="role" value="farmer"/>
+          <div class="icon">👨‍🌾</div>
+          <div class="label">Farmer</div>
+          <div class="sub">Sell my crops</div>
+        </label>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" name="name" placeholder="Your name" required/>
+        </div>
+        <div class="form-group">
+          <label>Phone Number *</label>
+          <input type="tel" name="phone" placeholder="10-digit number" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Village / City</label>
+          <input type="text" name="location" placeholder="e.g. Ongole"/>
+        </div>
+        <div class="form-group">
+          <label>District</label>
+          <input type="text" name="district" placeholder="e.g. Prakasam"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" name="password" placeholder="Create a password" required/>
+      </div>
+      <button type="submit" class="btn btn-green" style="width:100%;padding:13px;font-size:1rem;margin-top:6px;">Create Account</button>
+    </form>
+    <div style="text-align:center;margin-top:20px;font-size:.88rem;color:var(--muted);">
+      Already have an account? <a href="{{ url_for('login') }}" style="color:var(--green);font-weight:700;">Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
